@@ -169,6 +169,20 @@ func TestAlertProvider_buildRequestBody(t *testing.T) {
 			Resolved:     false,
 			ExpectedBody: "{\"chat_id\":\"123\",\"text\":\"⛑ *Gatus* \\nAn alert for *endpoint-name* has been triggered:\\n—\\n    _healthcheck failed 3 time(s) in a row_\\n—   \\n*Description* \\n[link](https://example.org/)  \\n\\n*Condition results*\\n❌ - `[CONNECTED] == true`\\n❌ - `[STATUS] == 200`\\n\",\"parse_mode\":\"MARKDOWN\"}",
 		},
+		{
+			Name:         "triggered with template",
+			Provider:     AlertProvider{DefaultConfig: Config{ID: "123", AlertTemplate: "Alert [STATUS] for [ENDPOINT_NAME]: [STATUS_ICON] \n[CONDITION_RESULTS]"}},
+			Alert:        alert.Alert{Description: &firstDescription, SuccessThreshold: 5, FailureThreshold: 3},
+			Resolved:     false,
+			ExpectedBody: "{\"chat_id\":\"123\",\"text\":\"Alert triggered for endpoint-name: ❌ \\n❌ - `[CONNECTED] == true`\\n❌ - `[STATUS] == 200`\\n\",\"parse_mode\":\"MARKDOWN\"}",
+		},
+		{
+			Name:         "resolved with template",
+			Provider:     AlertProvider{DefaultConfig: Config{ID: "123", AlertTemplate: "Alert [STATUS] for [ENDPOINT_NAME]: [STATUS_ICON]"}},
+			Alert:        alert.Alert{Description: &secondDescription, SuccessThreshold: 5, FailureThreshold: 3},
+			Resolved:     true,
+			ExpectedBody: "{\"chat_id\":\"123\",\"text\":\"Alert resolved for endpoint-name: ✅\",\"parse_mode\":\"MARKDOWN\"}",
+		},
 	}
 	for _, scenario := range scenarios {
 		t.Run(scenario.Name, func(t *testing.T) {
