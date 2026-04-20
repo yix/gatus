@@ -24,6 +24,9 @@ jobs:
           images: ${{ env.IMAGE_REPOSITORY }}
           tags: |
             type=raw,value=experimental
+      - name: Build Go Binaries
+        run: |
+          make build
       - name: Build and push Docker image
         uses: docker/build-push-action@v7
         with:
