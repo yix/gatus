@@ -2289,6 +2289,7 @@ Here's an example of what the notifications look like:
 | `alerting.telegram.id`                | Telegram Chat ID                                                                           | Required `""`              |
 | `alerting.telegram.topic-id`          | Telegram Topic ID in a group corresponds to `message_thread_id` in the Telegram API        | `""`                       |
 | `alerting.telegram.api-url`           | Telegram API URL                                                                           | `https://api.telegram.org` |
+| `alerting.telegram.disable-notification` | Sends the message silently. Users will receive a notification with no sound.               | `false`                    |
 | `alerting.telegram.client`            | Client configuration. <br />See [Client configuration](#client-configuration).             | `{}`                       |
 | `alerting.telegram.default-alert`     | Default alert configuration. <br />See [Setting a default alert](#setting-a-default-alert) | N/A                        |
 | `alerting.telegram.overrides`         | List of overrides that may be prioritized over the default configuration                   | `[]`                       |

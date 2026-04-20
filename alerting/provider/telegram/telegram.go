@@ -30,6 +30,8 @@ type Config struct {
 	TopicID string `yaml:"topic-id,omitempty"`
 	ApiUrl  string `yaml:"api-url"`
 
+	DisableNotification *bool `yaml:"disable-notification,omitempty"`
+
 	AlertTemplate string `yaml:"alert-template,omitempty"`
 
 	ClientConfig *client.Config `yaml:"client,omitempty"`
@@ -51,6 +53,9 @@ func (cfg *Config) Validate() error {
 func (cfg *Config) Merge(override *Config) {
 	if override.ClientConfig != nil {
 		cfg.ClientConfig = override.ClientConfig
+	}
+	if override.DisableNotification != nil {
+		cfg.DisableNotification = override.DisableNotification
 	}
 	if len(override.Token) > 0 {
 		cfg.Token = override.Token
@@ -116,7 +121,7 @@ func (provider *AlertProvider) Send(ep *endpoint.Endpoint, alert *alert.Alert, r
 	if err != nil {
 		return err
 	}
-	defer response.Body.Close()
+	defer response.Body.Close() //nolint:errcheck
 	if response.StatusCode > 399 {
 		body, _ := io.ReadAll(response.Body)
 		return fmt.Errorf("call to provider alert returned status code %d: %s", response.StatusCode, string(body))
@@ -125,10 +130,11 @@ func (provider *AlertProvider) Send(ep *endpoint.Endpoint, alert *alert.Alert, r
 }
 
 type Body struct {
-	ChatID    string `json:"chat_id"`
-	Text      string `json:"text"`
-	ParseMode string `json:"parse_mode"`
-	TopicID   string `json:"message_thread_id,omitempty"`
+	ChatID              string `json:"chat_id"`
+	Text                string `json:"text"`
+	ParseMode           string `json:"parse_mode"`
+	TopicID             string `json:"message_thread_id,omitempty"`
+	DisableNotification *bool  `json:"disable_notification,omitempty"`
 }
 
 // buildRequestBody builds the request body for the provider
@@ -194,10 +200,11 @@ func (provider *AlertProvider) buildRequestBody(cfg *Config, ep *endpoint.Endpoi
 		}
 	}
 	bodyAsJSON, _ := json.Marshal(Body{
-		ChatID:    cfg.ID,
-		Text:      text,
-		ParseMode: "MARKDOWN",
-		TopicID:   cfg.TopicID,
+		ChatID:              cfg.ID,
+		Text:                text,
+		ParseMode:           "MARKDOWN",
+		TopicID:             cfg.TopicID,
+		DisableNotification: cfg.DisableNotification,
 	})
 	return bodyAsJSON
 }

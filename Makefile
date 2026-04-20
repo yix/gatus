@@ -1,4 +1,5 @@
 BINARY=gatus
+BUILD_DIR := bin
 
 .PHONY: install
 install:
@@ -20,6 +21,15 @@ clean:
 test:
 	go test ./... -cover
 
+build: build-amd64 build-arm64 ## Build binaries for amd64 and arm64
+
+build-amd64: ## Build Linux amd64 binary
+	@mkdir -p $(BUILD_DIR)
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build $(LDFLAGS) -o $(BUILD_DIR)/$(APP_NAME)-amd64 .
+
+build-arm64: ## Build Linux arm64 binary
+	@mkdir -p $(BUILD_DIR)
+	GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build $(LDFLAGS) -o $(BUILD_DIR)/$(APP_NAME)-arm64 .
 
 ##########
 # Docker #

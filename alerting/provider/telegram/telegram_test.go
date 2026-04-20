@@ -183,6 +183,13 @@ func TestAlertProvider_buildRequestBody(t *testing.T) {
 			Resolved:     true,
 			ExpectedBody: "{\"chat_id\":\"123\",\"text\":\"Alert resolved for endpoint-name: ✅\",\"parse_mode\":\"MARKDOWN\"}",
 		},
+		{
+			Name:         "triggered with disable notification",
+			Provider:     AlertProvider{DefaultConfig: Config{ID: "123", DisableNotification: func() *bool { b := true; return &b }()}},
+			Alert:        alert.Alert{Description: &firstDescription, SuccessThreshold: 5, FailureThreshold: 3},
+			Resolved:     false,
+			ExpectedBody: "{\"chat_id\":\"123\",\"text\":\"⛑ *Gatus* \\nAn alert for *endpoint-name* has been triggered:\\n—\\n    _healthcheck failed 3 time(s) in a row_\\n—   \\n*Description* \\ndescription-1  \\n\\n*Condition results*\\n❌ - `[CONNECTED] == true`\\n❌ - `[STATUS] == 200`\\n\",\"parse_mode\":\"MARKDOWN\",\"disable_notification\":true}",
+		},
 	}
 	for _, scenario := range scenarios {
 		t.Run(scenario.Name, func(t *testing.T) {

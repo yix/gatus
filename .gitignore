@@ -2,7 +2,7 @@
 *.iml
 .idea
 .vscode
-
+bin/
 # OS
 .DS_Store
 
