@@ -10,7 +10,7 @@ COPY . ./
 # Run the binary on an empty container
 FROM scratch
 ARG TARGETARCH
-COPY bin/gatus-${TARGETARCH} /app/gatus
+COPY bin/gatus-${TARGETARCH} /gatus
 COPY config.yaml ./config/config.yaml
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 ENV GATUS_CONFIG_PATH=""
