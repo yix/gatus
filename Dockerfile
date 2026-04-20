@@ -3,13 +3,13 @@ FROM golang:alpine AS builder
 RUN apk --update add ca-certificates
 WORKDIR /app
 COPY . ./
-ARG TARGETARCH
 # Run Tests inside docker image if you don't have a configured go environment
 #RUN apk update && apk add --virtual build-dependencies build-base gcc
 #RUN go test ./... -mod vendor
 
 # Run the binary on an empty container
 FROM scratch
+ARG TARGETARCH
 COPY bin/gatus-${TARGETARCH} /app/gatus
 COPY config.yaml ./config/config.yaml
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
