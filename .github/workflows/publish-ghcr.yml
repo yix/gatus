@@ -1,4 +1,4 @@
-name: Build and Push Multi-Arch Image
+name: publish-ghcr
 
 on: [workflow_dispatch]
   
@@ -68,7 +68,8 @@ jobs:
           cache: true
 
       - name: Build Go binaries (amd64 + arm64)
-        run: make
+        run: |
+          make build
 
       # Build and push the image
       - name: Build and push
